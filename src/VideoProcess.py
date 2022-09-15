@@ -11,6 +11,8 @@ import imutils
 import time
 import cv2
 import kakaoToken
+import json
+import os
 
 def video_play(camset):
     # 동영상 열기
@@ -68,7 +70,16 @@ def video_play(camset):
                 #print(x+sx, y+sy, sw, sh, sa)
                 if time.time()>timer+30:
                     timer=time.time()
-                    kakaoToken.sendAlert()
+                    if os.path.exists('token.json'):
+                        with open("token.json","r") as kakao:
+                            tokens = json.load(kakao)
+                            print(tokens)
+                            if tokens.get('error') is None:
+                                kakaoToken.sendAlert()
+                            else:
+                                messagebox.showinfo('카카오톡 연동 실패','카카오톡 재연동이 필요합니다')
+                    else:
+                        messagebox.showinfo('움직임 감지','선택 구역에 움직임 감지됨')
 
                 cv2.rectangle(frame, (x+sx, y+sy, sw, sh), (0, 255, 0), 2)  
         cv2.imshow('frame', frame)
@@ -97,10 +108,4 @@ def video_play(camset):
 
     cv2.destroyAllWindows()
     return True
-
-
-# In[5]:
-
-
-video_play('dfd')
 
